@@ -1,0 +1,243 @@
+/***************************
+ * Author: John Gormley
+ * Description: A program that analyses 
+ *	a company's financial reports (data inmported from user)
+ * 	 and gives basic ratios
+ ****************************/
+
+import java.io.PrintWriter;
+import java.util.Scanner;
+import java.io.IOException;
+
+public class CompanyAnalyzer {
+	public static void main(String[] args) throws IOException {
+
+		//Variables
+		Scanner keyboard = new Scanner(System.in);
+		String outputFileName;
+		PrintWriter outputFile;
+		
+		double COGS = 1;
+		double beginningInventory = 1;
+		double endingInventory = 1;
+		double beginningStockholdersEquity = 1;
+		double endingStockholdersEquity = 1;
+		double EBIT = 1;
+		double interestExpense = 1;
+		double totalPlantAssets = 1;
+		double netIncome = 1;
+		double averageSharesOutstanding = 1;
+		double marketPricePerShare = 1;
+		double currentAssets = 1;
+		double currentLiabilities = 1;
+		double longTermAssets = 1;
+		double longTermLiabilities = 1;
+		double quickAssets = 1;
+		double otherAssets = 1;
+		double beginningTotalAssets = 1;
+		double endingTotalAssets = currentAssets + longTermAssets + otherAssets;
+		double endingTotalLiabilities = currentLiabilities + longTermLiabilities;
+		double netSales = 1;
+		double beginningAccountsReceivable = 1;
+		double endingAccountsReceivable = 1;
+		double averageInventory = (endingInventory + beginningInventory) / 2;
+		double averageAccountsReceivable = (endingAccountsReceivable + beginningAccountsReceivable) / 2;
+		double averageTotalAssets = (endingTotalAssets + beginningTotalAssets) / 2;
+		double averageStockholdersEquity = (beginningStockholdersEquity+ endingStockholdersEquity) / 2;
+		double dividends = 1;
+		double dividendsPerShare = dividends / averageSharesOutstanding;	
+		
+			//Ratios
+		double workingCapital;
+		double currentRatio;
+		double quickRatio;
+		double accountsReceivableTurnover;
+		double daysToCollectAccountsReceveiable;
+		double inventoryTurnover;
+		double daysToSellInventory;
+		
+		double debtToAssets;
+		double debtToEquity;
+		double timesInterestEarned;
+		double plantAssetsToLongTermLiabilities;
+		
+		double netMargin;
+		double assetTurnoverRatio;
+		double returnOnInvestment;
+		double returnOnEquity;
+		
+		double earningsPerShare;
+		double bookValue;
+		double PEratio;
+		double dividendYield;
+		
+
+		//open output file (.txt)
+		outputFileName = "CompanyAnalysis.txt";
+		outputFile = new PrintWriter(outputFileName);
+		
+		//get company information from user
+		System.out.println("Enter amount of current assets");
+		currentAssets = keyboard.nextDouble();
+		
+		System.out.println("Enter amount of current liabilities");
+		currentLiabilities = keyboard.nextDouble();
+		
+		System.out.println("Enter amount of quick assets");
+		quickAssets = keyboard.nextDouble();
+		
+		System.out.println("Enter amount of long-term assets");
+		longTermAssets = keyboard.nextDouble();
+		
+		System.out.println("Enter amount of long-term liabilities");
+		longTermLiabilities = keyboard.nextDouble();
+		
+		System.out.println("Enter amount of 'other' assets");
+		otherAssets = keyboard.nextDouble();
+		
+			//ending total assets equals current + long-term + other
+			//total liablilties equals current + long-term
+		
+		System.out.println("Enter beginning total assets (amount from year before)");
+		beginningTotalAssets = keyboard.nextDouble();
+		
+		System.out.println("Enter beginning accounts recievable (amount from year before)");
+		beginningAccountsReceivable = keyboard.nextDouble();
+		
+		System.out.println("Enter ending accounts recievable");
+		endingAccountsReceivable = keyboard.nextDouble();
+		
+		System.out.println("Enter beginnning inventory (amount from year before)");
+		beginningInventory = keyboard.nextDouble();
+		
+		System.out.println("Enter ending inventory");
+		endingInventory = keyboard.nextDouble();
+		
+		System.out.println("Enter net sales");
+		netSales = keyboard.nextDouble();
+		
+		System.out.println("Enter amount of Cost of Goods Sold (COGS)");
+		COGS = keyboard.nextDouble();
+		
+		System.out.println("Enter beginning total stockholder's equity (amount from year before)");
+		beginningStockholdersEquity = keyboard.nextDouble();
+		
+		System.out.println("Enter ending total stockholder's equity");
+		endingStockholdersEquity = keyboard.nextDouble();
+		
+		System.out.println("Enter total Earnings before interest and taxes (EBIT)");
+		EBIT = keyboard.nextDouble();
+		
+		System.out.println("Enter interest expense (if desired, otherwise put 1 NOT 0)");
+		interestExpense = keyboard.nextDouble();
+		
+		System.out.println("Enter total net plant assets");
+		totalPlantAssets = keyboard.nextDouble();
+		
+		System.out.println("Enter net income");
+		netIncome = keyboard.nextDouble();
+		
+		System.out.println("Enter average number of outstanding shares of common stock");
+		averageSharesOutstanding = keyboard.nextDouble();
+		
+		System.out.println("Enter market price per share of stock");
+		marketPricePerShare = keyboard.nextDouble();
+		
+		System.out.println("Enter amount of dividends");
+		dividends = keyboard.nextDouble();
+		
+		
+		//calculate everything
+		
+			//Liquidity Ratios
+		workingCapital = currentAssets - currentLiabilities;
+		currentRatio = currentAssets / currentLiabilities;
+		quickRatio = quickAssets / currentLiabilities;
+		accountsReceivableTurnover = netSales / averageAccountsReceivable;
+		daysToCollectAccountsReceveiable = 365 / accountsReceivableTurnover;
+		inventoryTurnover = COGS / averageInventory;
+		daysToSellInventory = 365 / inventoryTurnover;
+		
+			//Solvency Ratios
+		debtToAssets = endingTotalLiabilities / endingTotalAssets;
+		debtToEquity = endingTotalLiabilities / endingStockholdersEquity;
+		timesInterestEarned = EBIT / interestExpense;
+		plantAssetsToLongTermLiabilities = totalPlantAssets / longTermLiabilities;
+		
+		
+			//Profitability Ratios
+		netMargin = netIncome / netSales;
+		assetTurnoverRatio = netSales / averageTotalAssets;
+		returnOnInvestment = netIncome / averageTotalAssets;
+		returnOnEquity = netIncome / averageStockholdersEquity;
+		
+			//Stock Market Ratios
+		earningsPerShare = netIncome / averageSharesOutstanding;
+		bookValue = endingStockholdersEquity / averageSharesOutstanding;
+		PEratio = marketPricePerShare / earningsPerShare;
+		dividendYield = dividendsPerShare / marketPricePerShare;
+		
+		
+		//print out ratios
+		outputFile.print("Working Capital ");
+		outputFile.println(workingCapital);
+		
+		outputFile.print("Current Ratio ");
+		outputFile.println(currentRatio);
+		
+		outputFile.print("Quick Ratio ");
+		outputFile.println(quickRatio);
+		
+		outputFile.print("Accounts Receivable Turnover ");
+		outputFile.println(accountsReceivableTurnover);
+		
+		outputFile.print("Days To Collect Accounts Receviable ");
+		outputFile.println(daysToCollectAccountsReceveiable);
+		
+		outputFile.print("Inventory Turnover ");
+		outputFile.println(inventoryTurnover);
+		
+		outputFile.print("Days To Sell Inventory ");
+		outputFile.println(daysToSellInventory);
+		
+		outputFile.print("Debt To Assets ");
+		outputFile.println(debtToAssets);
+		
+		outputFile.print("Debt To Equity ");
+		outputFile.println(debtToEquity);
+		
+		outputFile.print("Times Interest Earned ");
+		outputFile.println(timesInterestEarned);
+		
+		outputFile.print("Plant Assets to Long-Term Liabilities ");
+		outputFile.println(plantAssetsToLongTermLiabilities);
+		
+		outputFile.print("Net Margin ");
+		outputFile.println(netMargin);
+		
+		outputFile.print("Asset Turnover Ratio ");
+		outputFile.println(assetTurnoverRatio);
+		
+		outputFile.print("Return On Investment ");
+		outputFile.println(returnOnInvestment);
+		
+		outputFile.print("Return On Equity ");
+		outputFile.println(returnOnEquity);
+		
+		outputFile.print("Earnings Per Share ");
+		outputFile.println(earningsPerShare);
+		
+		outputFile.print("Book Value Per Share ");
+		outputFile.println(bookValue);
+		
+		outputFile.print("Price-Earnings (PE) Ratio ");
+		outputFile.println(PEratio);
+		
+		outputFile.print("dividend Yield ");
+		outputFile.println(dividendYield);
+		
+		//close output file
+		outputFile.close();
+		System.out.println("done");			
+	}
+}

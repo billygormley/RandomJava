@@ -1,0 +1,239 @@
+/*Name: John Gormley
+ *Date: 3-9-2012
+ *Description: This program opens a transcript file and sees if a student 
+ *has fulfilled requirements for graduation, AOIs, and a CS Minor.
+ */
+
+import java.util.Scanner;
+import java.io.*;
+
+public class AssignmentSix {
+
+	public static void main(String[] args) throws IOException {
+
+		//variables
+		Scanner keyboard = new Scanner(System.in);
+		String inputFileName;
+		File inFile;
+		Scanner inputFile;
+
+		String courseDept;
+		int courseNumber;
+		String courseTitle;
+		String courseGrade;
+		String tag;
+
+		double courseCredit = 0.0;
+		boolean wcAOI = false;
+		boolean quanAOI = false;
+		boolean aeAOI = false;
+
+		double totalUpperCredits = 0.0;
+		double totalCredits = 0.0;
+		double totalPoints = 0.0;
+
+		boolean math54 = false;
+		boolean cs65 = false;
+		boolean cs66 = false;
+		boolean cs130 = false;
+		boolean cs135 = false;
+		int upperCSClasses = 0;
+
+		//open transcript file
+		System.out.println("Enter input file name");
+		inputFileName = keyboard.nextLine();
+
+		inFile = new File(inputFileName);
+		if(!inFile.exists()){
+			System.out.println("That file doesn't exist");
+			System.exit(0);
+		}
+		
+		inputFile = new Scanner(inFile);
+
+		//runs through transcript
+		while(inputFile.hasNext()) {
+
+			tag = inputFile.next();
+
+			if(!tag.equals("-")){
+				inputFile.nextLine();
+			}
+
+			else{
+				
+				courseDept = inputFile.next();
+				courseNumber = inputFile.nextInt();
+				courseTitle = inputFile.next();
+				courseGrade = inputFile.next();
+				courseCredit = inputFile.nextDouble();
+
+				//checking if AOi's are satisfied
+				if (writtenCommunication(courseDept, courseNumber, courseGrade)){
+					wcAOI = true;
+				}
+
+				if (quantitativeLiteracy(courseDept, courseNumber, courseGrade)){
+					quanAOI = true;
+				}
+
+				if (artisticExperience(courseDept, courseNumber, courseGrade)){
+					aeAOI = true;
+				}
+
+				//checking if CS Minor is satisfied
+				if(courseDept.equals("MATH") && courseNumber == 54 && !courseGrade.equals("F")){
+					math54 = true;
+				}
+				
+				if(courseDept.equals("CS") && courseNumber == 65 && !courseGrade.equals("F")){
+					cs65 = true;
+				}
+				
+				if(courseDept.equals("CS") && courseNumber == 66 && !courseGrade.equals("F")){
+					cs66 = true;
+				}
+				
+				if(courseDept.equals("CS") && courseNumber == 130 && !courseGrade.equals("F")){
+					cs130 = true;
+				}
+				
+				if(courseDept.equals("CS") && courseNumber == 135  && !courseGrade.equals("F")){
+					cs135 = true;
+				}
+				
+				if(courseDept.equals("CS") && courseNumber >=100  && !courseGrade.equals("F")){
+					upperCSClasses++;
+				}
+				
+
+				//adding up total credits
+				if(!courseGrade.equals("F")) {
+					totalCredits += courseCredit;
+					
+					if (courseNumber >= 100) {
+						totalUpperCredits += courseCredit; 
+					}
+				}
+
+				//getting total pints
+				if(courseGrade.equals("A")) {
+					totalPoints += courseCredit*4;
+				}
+
+				if(courseGrade.equals("B")) {
+					totalPoints += courseCredit*3;
+				}
+				if(courseGrade.equals("C")) {
+					totalPoints += courseCredit*2;
+				}
+				if(courseGrade.equals("D")) {
+					totalPoints += courseCredit*1;
+				}
+
+			}
+		}
+
+		//calculate and print out gpa
+		double gpa = totalPoints/totalCredits;
+		System.out.println("Your GPA is " + gpa);
+
+		//print out total credits and total upper credits
+		System.out.println("Your total credit count is: " + totalCredits);
+		System.out.println("Your total upper credit count is: " + totalUpperCredits);
+
+		//Printing out if AOi's are satisfied
+		if(wcAOI == true){
+			System.out.println("Written Communication AOI is satisfied");}
+
+		else {
+			System.out.println("Written Communication AOI is NOT satisfied");
+		}
+
+		if(quanAOI == true){
+			System.out.println("Quantitative Literacy AOI is satisfied");
+		}
+
+		else {
+			System.out.println("Quantitative Literacy AOI is NOT satisfied");
+		}
+
+		if(aeAOI == true){
+			System.out.println("Artistic Experience AOI is satisfied");
+		}
+
+		else {
+			System.out.println("Artistic Experience AOI is NOT satisfied");
+		}
+		
+		//printing out if CS Mnior is earned
+		if(cs65 && cs66 && cs130 && cs135 && upperCSClasses>=4){
+			System.out.println("CS Minor is earned");
+		}
+		
+		else{
+			System.out.println("CS Minor is NOT earned");
+			
+			if(cs65 = false) {
+				System.out.println("You are missing CS65");
+			}
+			
+			if(cs66 = false) {
+				System.out.println("You are missing CS66");
+			}
+			
+			if(cs130 = false) {
+				System.out.println("You are missing CS130");
+			}
+			
+			if(cs135 = false) {
+				System.out.println("You are missing CS135");
+			}
+			
+			if(upperCSClasses < 4 ) {
+				System.out.println("You are missing Uper level CS classes");
+			}
+		}
+
+	}
+
+	//check to see if AOI's are satified
+	public static boolean writtenCommunication(String deptName, int courseNumber, String courseGrade) {
+
+		boolean result1 = false;
+
+		if((deptName.equals("ENG") && courseNumber == 42 && !courseGrade.equals("F"))||
+				(deptName.equals("JMC") && courseNumber == 54 && !courseGrade.equals("F"))||
+				(deptName.equals("MUS") && courseNumber == 111 && !courseGrade.equals("F"))) {
+			result1 = true;
+		}	
+
+		return result1;
+	}
+
+	public static boolean artisticExperience(String deptName, int courseNumber, String courseGrade) {
+
+		boolean result2 = false;
+
+		if((deptName.equals("ART") && courseNumber == 002 && !courseGrade.equals("F"))||
+				(deptName.equals("ART") && courseNumber == 013 && !courseGrade.equals("F"))||
+				(deptName.equals("BIO") && courseNumber == 061 && !courseGrade.equals("F"))) {
+			result2 = true;
+		}	
+
+		return result2;
+	}
+
+	public static boolean quantitativeLiteracy(String deptName, int courseNumber, String courseGrade) {
+
+		boolean result3 = false;
+
+		if((deptName.equals("MATH") && courseNumber == 70 && !courseGrade.equals("F"))||
+				(deptName.equals("MATH") && courseNumber == 54 && !courseGrade.equals("F"))||
+				(deptName.equals("MATH") && courseNumber == 100 && !courseGrade.equals("F"))) {
+			result3 = true;
+		}	
+
+		return result3;
+	}
+}

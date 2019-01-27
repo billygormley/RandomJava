@@ -1,0 +1,655 @@
+/***************************
+ * Author: John Gormley
+ * Description: A program that analyses 
+ * 	stock prices (a .txt file) and gives basic ratios
+ ****************************/
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+import java.text.DecimalFormat;
+import javax.swing.JOptionPane;
+
+public class StockMarketAnalyzer {
+
+	public static void main(String[] args) throws IOException {
+
+		//variables
+		String inputFileName;
+		File inFile;
+		Scanner inputFile;
+		String outputFileName;
+		PrintWriter outputFile;
+		double stockPrice = 0.0;
+		String a;
+
+		double avgT = 0.0, firstT = 0.0, lastT = 0.0, highT = Double.MIN_VALUE, lowT = Double.MAX_VALUE,
+			avgVZ = 0.0, firstVZ = 0.0, lastVZ = 0.0, highVZ = Double.MIN_VALUE, lowVZ = Double.MAX_VALUE,
+			avgAA = 0.0, firstAA = 0.0, lastAA = 0.0, highAA = Double.MIN_VALUE, lowAA = Double.MAX_VALUE,	
+			avgBA = 0.0, firstBA = 0.0, lastBA = 0.0, highBA = Double.MIN_VALUE, lowBA = Double.MAX_VALUE,
+			avgKO = 0.0, firstKO = 0.0, lastKO = 0.0, highKO = Double.MIN_VALUE, lowKO = Double.MAX_VALUE,
+			avgDD = 0.0, firstDD = 0.0, lastDD = 0.0, highDD = Double.MIN_VALUE, lowDD = Double.MAX_VALUE,
+			avgGE = 0.0, firstGE = 0.0, lastGE = 0.0, highGE = Double.MIN_VALUE, lowGE = Double.MAX_VALUE,
+			avgHD = 0.0, firstHD = 0.0, lastHD = 0.0, highHD = Double.MIN_VALUE,lowHD = Double.MAX_VALUE,
+			avgPG = 0.0, firstPG = 0.0, lastPG = 0.0, highPG = Double.MIN_VALUE, lowPG = Double.MAX_VALUE,
+			avgAXP = 0.0, firstAXP = 0.0, lastAXP = 0.0, highAXP = Double.MIN_VALUE, lowAXP = Double.MAX_VALUE,
+			avgBAC = 0.0, firstBAC = 0.0, lastBAC = 0.0, highBAC = Double.MIN_VALUE, lowBAC = Double.MAX_VALUE, 
+			avgCAT = 0.0, firstCAT = 0.0, lastCAT = 0.0,highCAT = Double.MIN_VALUE, lowCAT = Double.MAX_VALUE,
+			avgCVX = 0.0, firstCVX = 0.0, lastCVX = 0.0, highCVX = Double.MIN_VALUE, lowCVX = Double.MAX_VALUE,		
+			avgXOM = 0.0, firstXOM = 0.0, lastXOM = 0.0, highXOM = Double.MIN_VALUE, lowXOM = Double.MAX_VALUE,	
+			avgHPQ = 0.0, firstHPQ = 0.0, lastHPQ = 0.0, highHPQ = Double.MIN_VALUE, lowHPQ = Double.MAX_VALUE,	
+			avgIBM = 0.0, firstIBM = 0.0, lastIBM = 0.0, highIBM = Double.MIN_VALUE, lowIBM = Double.MAX_VALUE,
+			avgJNJ = 0.0, firstJNJ = 0.0, lastJNJ = 0.0, highJNJ = Double.MIN_VALUE, lowJNJ = Double.MAX_VALUE,
+			avgJPM = 0.0, firstJPM = 0.0, lastJPM = 0.0, highJPM = Double.MIN_VALUE, lowJPM = Double.MAX_VALUE, 
+			avgKFT = 0.0, firstKFT = 0.0, lastKFT = 0.0, highKFT = Double.MIN_VALUE, lowKFT = Double.MAX_VALUE,
+			avgMCD = 0.0, firstMCD = 0.0, lastMCD = 0.0, highMCD = Double.MIN_VALUE, lowMCD = Double.MAX_VALUE,
+			avgMMM = 0.0, firstMMM = 0.0, lastMMM = 0.0, highMMM = Double.MIN_VALUE, lowMMM = Double.MAX_VALUE,
+			avgMRK = 0.0, firstMRK = 0.0, lastMRK = 0.0, highMRK = Double.MIN_VALUE, lowMRK = Double.MAX_VALUE,	
+			avgPFE = 0.0, firstPFE = 0.0, lastPFE = 0.0, highPFE = Double.MIN_VALUE, lowPFE = Double.MAX_VALUE,	
+			avgTRV = 0.0, firstTRV = 0.0, lastTRV = 0.0, highTRV = Double.MIN_VALUE, lowTRV = Double.MAX_VALUE,
+			avgUTX = 0.0, firstUTX = 0.0, lastUTX = 0.0, highUTX = Double.MIN_VALUE, lowUTX = Double.MAX_VALUE,	
+			avgWMT = 0.0, firstWMT = 0.0, lastWMT = 0.0, highWMT = Double.MIN_VALUE, lowWMT = Double.MAX_VALUE,
+			avgDIS = 0.0, firstDIS = 0.0, lastDIS = 0.0, highDIS = Double.MIN_VALUE, lowDIS = Double.MAX_VALUE,
+			avgCSCO = 0.0, firstCSCO = 0.0, lastCSCO = 0.0, highCSCO = Double.MIN_VALUE, lowCSCO = Double.MAX_VALUE,
+			avgMSFT = 0.0, firstMSFT = 0.0, lastMSFT = 0.0, highMSFT = Double.MIN_VALUE, lowMSFT = Double.MAX_VALUE,
+			avgINTC = 0.0, firstINTC = 0.0, lastINTC = 0.0, highINTC = Double.MIN_VALUE, lowINTC = Double.MAX_VALUE;
+
+		//get input file name and which time period user wants to analyze 
+		inputFileName = JOptionPane.showInputDialog("Enter the file you would like to analyze");
+		String inputDays = JOptionPane.showInputDialog("How many days would you like to analyze? (Q1 = 61 days. Q2 = 21 days)");
+		int numberOfDays = Integer.parseInt(inputDays);
+
+		//open Dow Jones Raw Data Excel Spreadsheet 
+		inFile = new File(inputFileName);
+		inputFile = new Scanner(inFile);
+
+		//open output file (.txt)
+		outputFileName = "StockMarketAnalysis.txt";
+		outputFile = new PrintWriter(outputFileName);
+		outputFile.println("Analysis of " + inputFileName);
+
+		//read-in stock prices for all 30 DJIA companies (data is vertical)
+		for (int i = 0; i < numberOfDays + 1; i++){
+			for (int j = 0; j < 31; j++){
+
+				a = inputFile.next();
+
+				if(i == 0){outputFile.print(a + "	   ");}
+				else if(i > 0 && j == 0){outputFile.print(" ");}
+				else{
+					stockPrice = Double.parseDouble(a);	
+					//calculate averages
+					if (j == 1){
+						avgMMM += stockPrice;
+						if(lowMMM > stockPrice){lowMMM = stockPrice;}
+						if(highMMM < stockPrice){highMMM = stockPrice;}
+						if(i == 1){firstMMM = stockPrice;}
+						if(i == numberOfDays){lastMMM = stockPrice;}
+					}
+					else if(j == 2){
+						avgAA += stockPrice;
+						if(lowAA > stockPrice){lowAA = stockPrice;}
+						if(highAA < stockPrice){highAA = stockPrice;}
+						if(i == 1){firstAA = stockPrice;}
+						if(i == numberOfDays){lastAA = stockPrice;}
+					}				
+					else if(j == 3){
+						avgAXP += stockPrice;
+						if(lowAXP > stockPrice){lowAXP = stockPrice;}
+						if(highAXP < stockPrice){highAXP = stockPrice;}
+						if(i == 1){firstAXP = stockPrice;}
+						if(i == numberOfDays){lastAXP = stockPrice;}
+					}
+					else if(j == 4){
+						avgT += stockPrice;
+						if(lowT > stockPrice){lowT = stockPrice;}
+						if(highT < stockPrice){highT = stockPrice;}
+						if(i == 1){firstT = stockPrice;}
+						if(i == numberOfDays){lastT = stockPrice;}
+					}
+					else if(j == 5){
+						avgBAC += stockPrice;
+						if(lowBAC > stockPrice){lowBAC = stockPrice;}
+						if(highBAC < stockPrice){highBAC = stockPrice;}
+						if(i == 1){firstBAC = stockPrice;}
+						if(i == numberOfDays){lastBAC = stockPrice;}
+					}
+					else if(j == 6){
+						avgBA += stockPrice;
+						if(lowBA > stockPrice){lowBA = stockPrice;}
+						if(highBA < stockPrice){highBA = stockPrice;}
+						if(i == 1){firstBA = stockPrice;}
+						if(i == numberOfDays){lastBA = stockPrice;}
+					}
+					else if(j == 7){
+						avgCAT += stockPrice;
+						if(lowCAT > stockPrice){lowCAT = stockPrice;}
+						if(highCAT < stockPrice){highCAT = stockPrice;}
+						if(i == 1){firstCAT = stockPrice;}
+						if(i == numberOfDays){lastCAT = stockPrice;}
+					}
+					else if(j == 8){
+						avgCVX += stockPrice;
+						if(lowCVX > stockPrice){lowCVX = stockPrice;}
+						if(highCVX < stockPrice){highCVX = stockPrice;}
+						if(i == 1){firstCVX = stockPrice;}
+						if(i == numberOfDays){lastCVX = stockPrice;}
+					}
+					else if(j == 9){
+						avgCSCO += stockPrice;
+						if(lowCSCO > stockPrice){lowCSCO = stockPrice;}
+						if(highCSCO < stockPrice){highCSCO = stockPrice;}
+						if(i == 1){firstCSCO = stockPrice;}
+						if(i == numberOfDays){lastCSCO = stockPrice;}
+					}
+					else if(j == 10){
+						avgKO += stockPrice;
+						if(lowKO > stockPrice){lowKO = stockPrice;}
+						if(highKO < stockPrice){highKO = stockPrice;}
+						if(i == 1){firstKO = stockPrice;}
+						if(i == numberOfDays){lastKO = stockPrice;}
+					}
+					else if(j == 11){
+						avgDD += stockPrice;
+						if(lowDD > stockPrice){lowDD = stockPrice;}
+						if(highDD < stockPrice){highDD = stockPrice;}
+						if(i == 1){firstDD = stockPrice;}
+						if(i == numberOfDays){lastDD = stockPrice;}
+					}
+					else if(j == 12){
+						avgXOM += stockPrice;
+						if(lowXOM > stockPrice){lowXOM = stockPrice;}
+						if(highXOM < stockPrice){highXOM = stockPrice;}
+						if(i == 1){firstXOM = stockPrice;}
+						if(i == numberOfDays){lastXOM = stockPrice;}
+					}
+					else if(j == 13){
+						avgGE += stockPrice;
+						if(lowGE > stockPrice){lowGE = stockPrice;}
+						if(highGE < stockPrice){highGE = stockPrice;}
+						if(i == 1){firstGE = stockPrice;}
+						if(i == numberOfDays){lastGE = stockPrice;}
+					}
+					else if(j == 14){
+						avgHPQ += stockPrice;
+						if(lowHPQ > stockPrice){lowHPQ = stockPrice;}
+						if(highHPQ < stockPrice){highHPQ = stockPrice;}
+						if(i == 1){firstHPQ = stockPrice;}
+						if(i == numberOfDays){lastHPQ = stockPrice;}
+					}
+					else if(j == 15){
+						avgHD += stockPrice;
+						if(lowHD > stockPrice){lowHD = stockPrice;}
+						if(highHD < stockPrice){highHD = stockPrice;}
+						if(i == 1){firstHD = stockPrice;}
+						if(i == numberOfDays){lastHD = stockPrice;}
+					}
+					else if(j == 16){
+						avgINTC += stockPrice;
+						if(lowINTC > stockPrice){lowINTC = stockPrice;}
+						if(highINTC < stockPrice){highINTC = stockPrice;}
+						if(i == 1){firstINTC = stockPrice;}
+						if(i == numberOfDays){lastINTC = stockPrice;}
+					}
+					else if(j == 17){
+						avgIBM += stockPrice;
+						if(lowIBM > stockPrice){lowIBM = stockPrice;}
+						if(highIBM < stockPrice){highIBM = stockPrice;}
+						if(i == 1){firstIBM = stockPrice;}
+						if(i == numberOfDays){lastIBM = stockPrice;}
+					}
+					else if(j == 18){
+						avgJNJ += stockPrice;
+						if(lowJNJ > stockPrice){lowJNJ = stockPrice;}
+						if(highJNJ < stockPrice){highJNJ = stockPrice;}
+						if(i == 1){firstJNJ = stockPrice;}
+						if(i == numberOfDays){lastJNJ = stockPrice;}
+					}
+					else if(j == 19){
+						avgJPM += stockPrice;
+						if(lowJPM > stockPrice){lowJPM = stockPrice;}
+						if(highJPM < stockPrice){highJPM = stockPrice;}
+						if(i == 1){firstJPM = stockPrice;}
+						if(i == numberOfDays){lastJPM = stockPrice;}
+					}
+					else if(j == 20){
+						avgKFT += stockPrice;
+						if(lowKFT > stockPrice){lowKFT = stockPrice;}
+						if(highKFT < stockPrice){highKFT = stockPrice;}
+						if(i == 1){firstKFT = stockPrice;}
+						if(i == numberOfDays){lastKFT = stockPrice;}
+					}
+					else if(j == 21){
+						avgMCD += stockPrice;
+						if(lowMCD > stockPrice){lowMCD = stockPrice;}
+						if(highMCD < stockPrice){highMCD = stockPrice;}
+						if(i == 1){firstMCD = stockPrice;}
+						if(i == numberOfDays){lastMCD = stockPrice;}
+					}
+					else if(j == 22){
+						avgMRK += stockPrice;
+						if(lowMRK > stockPrice){lowMRK = stockPrice;}
+						if(highMRK < stockPrice){highMRK = stockPrice;}
+						if(i == 1){firstMRK = stockPrice;}
+						if(i == numberOfDays){lastMRK = stockPrice;}
+					}
+					else if(j == 23){
+						avgMSFT += stockPrice;
+						if(lowMSFT > stockPrice){lowMSFT = stockPrice;}
+						if(highMSFT < stockPrice){highMSFT = stockPrice;}
+						if(i == 1){firstMSFT = stockPrice;}
+						if(i == numberOfDays){lastMSFT = stockPrice;}
+					}
+					else if(j == 24){
+						avgPFE += stockPrice;
+						if(lowPFE > stockPrice){lowPFE = stockPrice;}
+						if(highPFE < stockPrice){highPFE = stockPrice;}
+						if(i == 1){firstPFE = stockPrice;}
+						if(i == numberOfDays){lastPFE = stockPrice;}
+					}
+					else if(j == 25){
+						avgPG += stockPrice;
+						if(lowPG > stockPrice){lowPG = stockPrice;}
+						if(highPG < stockPrice){highPG = stockPrice;}
+						if(i == 1){firstPG = stockPrice;}
+						if(i == numberOfDays){lastPG = stockPrice;}
+					}
+					else if(j == 26){
+						avgTRV += stockPrice;
+						if(lowTRV > stockPrice){lowTRV = stockPrice;}
+						if(highTRV < stockPrice){highTRV = stockPrice;}
+						if(i == 1){firstTRV = stockPrice;}
+						if(i == numberOfDays){lastTRV = stockPrice;}
+					}
+					else if(j == 27){
+						avgUTX += stockPrice;
+						if(lowUTX > stockPrice){lowUTX = stockPrice;}
+						if(highUTX < stockPrice){highUTX = stockPrice;}
+						if(i == 1){firstUTX = stockPrice;}
+						if(i == numberOfDays){lastUTX = stockPrice;}
+					}
+					else if(j == 28){
+						avgVZ += stockPrice;
+						if(lowVZ > stockPrice){lowVZ = stockPrice;}
+						if(highVZ < stockPrice){highVZ = stockPrice;}
+						if(i == 1){firstVZ = stockPrice;}
+						if(i == numberOfDays){lastVZ = stockPrice;}
+					}
+					else if(j == 29){
+						avgWMT += stockPrice;
+						if(lowWMT > stockPrice){lowWMT = stockPrice;}
+						if(highWMT < stockPrice){highWMT = stockPrice;}
+						if(i == 1){firstWMT = stockPrice;}
+						if(i == numberOfDays){lastWMT = stockPrice;}
+					}
+					else if(j == 30){
+						avgDIS += stockPrice;
+						if(lowDIS > stockPrice){lowDIS = stockPrice;}
+						if(highDIS < stockPrice){highDIS = stockPrice;}
+						if(i == 1){firstDIS = stockPrice;}
+						if(i == numberOfDays){lastDIS = stockPrice;}
+					}
+				}
+				outputFile.print(" ");
+			}
+		}
+		outputFile.println();
+		
+		//formats the decimals
+		DecimalFormat formatter = new DecimalFormat("#00.00");
+
+		//different analyses of data (avg of each, biggest change, biggest percent change, etc.)
+
+		//highs
+		outputFile.print("Highs" + "     ");
+		outputFile.print(highMMM + "		");
+		outputFile.print(highAA + "	");
+		outputFile.print(highAXP + "	");
+		outputFile.print(highT + "	");
+		outputFile.print(highBAC + "	");
+		outputFile.print(highBA + "	");
+		outputFile.print(highCAT + " 	");
+		outputFile.print(highCVX + "	 ");
+		outputFile.print(highCSCO + "		 ");
+		outputFile.print(highKO + "	 ");
+		outputFile.print(highDD + "	 ");
+		outputFile.print(highXOM + " 	");
+		outputFile.print(highGE + " 	");
+		outputFile.print(highHPQ + "	");
+		outputFile.print(highHD + "	");
+		outputFile.print(highINTC + "		");
+		outputFile.print(highIBM + "	");
+		outputFile.print(highJNJ + "	");
+		outputFile.print(highJPM + "	");
+		outputFile.print(highKFT + "	");
+		outputFile.print(highMCD + "	");
+		outputFile.print(highMRK + "	");
+		outputFile.print(highMSFT + "		");
+		outputFile.print(highPFE + "	");
+		outputFile.print(highPG + "	");
+		outputFile.print(highTRV + "	");
+		outputFile.print(highUTX + "	");
+		outputFile.print(highVZ + "	");
+		outputFile.print(highWMT + "	");
+		outputFile.println(highDIS + " ");
+
+		//lows
+		outputFile.print("Lows" + "      ");
+		outputFile.print(lowMMM + "		 ");
+		outputFile.print(lowAA + "	");
+		outputFile.print(lowAXP + "	");
+		outputFile.print(lowT + "	");
+		outputFile.print(lowBAC + "	");
+		outputFile.print(lowBA + "	");
+		outputFile.print(lowCAT + "	 ");
+		outputFile.print(lowCVX + "	 ");
+		outputFile.print(lowCSCO + " 		");
+		outputFile.print(lowKO + "	 ");
+		outputFile.print(lowDD + "	 ");
+		outputFile.print(lowXOM + "	 ");
+		outputFile.print(lowGE + "	 ");
+		outputFile.print(lowHPQ + "	 ");
+		outputFile.print(lowHD + "	 ");
+		outputFile.print(lowINTC + " 		");
+		outputFile.print(lowIBM + "	");
+		outputFile.print(lowJNJ + "	");
+		outputFile.print(lowJPM + "	 ");
+		outputFile.print(lowKFT + "	 ");
+		outputFile.print(lowMCD + "	");
+		outputFile.print(lowMRK + "	 ");
+		outputFile.print(lowMSFT + "		 ");
+		outputFile.print(lowPFE + "	");
+		outputFile.print(lowPG + "	");
+		outputFile.print(lowTRV + "	");
+		outputFile.print(lowUTX + "	");
+		outputFile.print(lowVZ + "	");
+		outputFile.print(lowWMT + "	");
+		outputFile.println(lowDIS + "	");
+
+		//total change
+		outputFile.print("Ttl Chng." + " ");
+
+		double totalChangeMMM = firstMMM - lastMMM;
+		outputFile.print(formatter.format(totalChangeMMM) + "		");
+
+		double totalChangeAA = firstAA - lastAA;
+		outputFile.print(formatter.format(totalChangeAA) + "	");
+
+		double totalChangeAXP = firstAXP - lastAXP;
+		outputFile.print(formatter.format(totalChangeAXP) + "	");
+
+		double totalChangeT = firstT - lastT;
+		outputFile.print(formatter.format(totalChangeT) + "	");
+
+		double totalChangeBAC = firstBAC - lastBAC;
+		outputFile.print(formatter.format(totalChangeBAC) + "	");
+
+		double totalChangeBA = firstBA - lastBA;
+		outputFile.print(formatter.format(totalChangeBA) + "	");
+
+		double totalChangeCAT = firstCAT - lastCAT;
+		outputFile.print(formatter.format(totalChangeCAT) + "	");
+
+		double totalChangeCVX = firstCVX - lastCVX;
+		outputFile.print(formatter.format(totalChangeCVX) + "	");
+
+		double totalChangeCSCO = firstCSCO- lastCSCO;
+		outputFile.print(formatter.format(totalChangeCSCO) + "		");
+
+		double totalChangeKO= firstKO - lastKO;
+		outputFile.print(formatter.format(totalChangeKO) + "	");
+
+		double totalChangeDD = firstDD - lastDD;
+		outputFile.print(formatter.format(totalChangeDD) + "	");
+
+		double totalChangeXOM = firstXOM - lastXOM;
+		outputFile.print(formatter.format(totalChangeXOM) + "	");
+
+		double totalChangeGE = firstGE - lastGE;
+		outputFile.print(formatter.format(totalChangeGE) + "	");
+
+		double totalChangeHPQ = firstHPQ - lastHPQ;
+		outputFile.print(formatter.format(totalChangeHPQ) + "	");
+
+		double totalChangeHD = firstHD - lastHD;
+		outputFile.print(formatter.format(totalChangeHD) + "	");
+
+		double totalChangeINTC = firstINTC - lastINTC;
+		outputFile.print(formatter.format(totalChangeINTC) + "		");
+
+		double totalChangeIBM = firstIBM - lastIBM;
+		outputFile.print(formatter.format(totalChangeIBM) + "	");
+
+		double totalChangeJNJ = firstJNJ - lastJNJ;
+		outputFile.print(formatter.format(totalChangeJNJ) + "	");
+
+		double totalChangeJPM = firstJPM - lastJPM;
+		outputFile.print(formatter.format(totalChangeJPM) + "	");
+
+		double totalChangeKFT = firstKFT - lastKFT;
+		outputFile.print(formatter.format(totalChangeKFT) + "	");
+
+		double totalChangeMCD = firstMCD - lastMCD;
+		outputFile.print(formatter.format(totalChangeMCD) + "	");
+
+		double totalChangeMRK = firstMRK - lastMRK;
+		outputFile.print(formatter.format(totalChangeMRK) + "	");
+
+		double totalChangeMSFT = firstMSFT - lastMSFT;
+		outputFile.print(formatter.format(totalChangeMSFT) + "		");
+
+		double totalChangePFE = firstPFE - lastPFE;
+		outputFile.print(formatter.format(totalChangePFE) + "	");
+
+		double totalChangePG = firstPG - lastPG;
+		outputFile.print(formatter.format(totalChangePG) + "	");
+
+		double totalChangeTRV = firstTRV - lastTRV;
+		outputFile.print(formatter.format(totalChangeTRV) + "	");
+
+		double totalChangeUTX = firstUTX - lastUTX;
+		outputFile.print(formatter.format(totalChangeUTX) + "	");
+
+		double totalChangeVZ = firstVZ - lastVZ;
+		outputFile.print(formatter.format(totalChangeVZ) + "	");
+
+		double totalChangeWMT = firstWMT - lastWMT;
+		outputFile.print(formatter.format(totalChangeWMT) + "	");
+
+		double totalChangeDIS = firstDIS - lastDIS;
+		outputFile.println(formatter.format(totalChangeDIS) + "	");
+
+		//percent change
+		outputFile.print("% Change" +"  ");
+
+		double percentChangeMMM = (totalChangeMMM / firstMMM)*100;
+		outputFile.print(formatter.format(percentChangeMMM) + "		");
+
+		double percentChangeAA = (totalChangeAA / firstAA)*100;
+		outputFile.print(formatter.format(percentChangeAA) + "	");
+
+		double percentChangeAXP = (totalChangeAXP / firstAXP)*100;
+		outputFile.print(formatter.format(percentChangeAXP) + "	");
+
+		double percentChangeT = (totalChangeT / firstT)*100;
+		outputFile.print(formatter.format(percentChangeT) + "	");
+
+		double percentChangeBAC = (totalChangeBAC / firstBAC)*100;
+		outputFile.print(formatter.format(percentChangeBAC) + "	");
+
+		double percentChangeBA = (totalChangeBA / firstBA)*100;
+		outputFile.print(formatter.format(percentChangeBA) + "	");
+
+		double percentChangeCAT = (totalChangeCAT / firstCAT)*100;
+		outputFile.print(formatter.format(percentChangeCAT) + "	");
+
+		double percentChangeCVX = (totalChangeCVX / firstCVX)*100;
+		outputFile.print(formatter.format(percentChangeCVX) + "	");
+
+		double percentChangeCSCO = (totalChangeCSCO / firstCSCO)*100;
+		outputFile.print(formatter.format(percentChangeCSCO) + "		");
+
+		double percentChangeKO = (totalChangeKO / firstKO)*100;
+		outputFile.print(formatter.format(percentChangeKO) + "	");
+
+		double percentChangeDD = (totalChangeDD / firstDD)*100;
+		outputFile.print(formatter.format(percentChangeDD) + "	");
+
+		double percentChangeXOM = (totalChangeXOM / firstXOM)*100;
+		outputFile.print(formatter.format(percentChangeXOM) + "	");
+
+		double percentChangeGE = (totalChangeGE / firstGE)*100;
+		outputFile.print(formatter.format(percentChangeGE) + "	");
+
+		double percentChangeHPQ = (totalChangeHPQ / firstHPQ)*100;
+		outputFile.print(formatter.format(percentChangeHPQ) + "	");
+
+		double percentChangeHD = (totalChangeHD / firstHD)*100;
+		outputFile.print(formatter.format(percentChangeHD) + "	");
+
+		double percentChangeINTC = (totalChangeINTC / firstINTC)*100;
+		outputFile.print(formatter.format(percentChangeINTC) + "		");
+
+		double percentChangeIBM = (totalChangeIBM / firstIBM)*100;
+		outputFile.print(formatter.format(percentChangeIBM) + "	");
+
+		double percentChangeJNJ = (totalChangeJNJ / firstJNJ)*100;
+		outputFile.print(formatter.format(percentChangeJNJ) + "	");
+
+		double percentChangeJPM = (totalChangeJPM / firstJPM)*100;
+		outputFile.print(formatter.format(percentChangeJPM) + "	");
+
+		double percentChangeKFT = (totalChangeKFT / firstKFT)*100;
+		outputFile.print(formatter.format(percentChangeKFT) + "	");
+
+		double percentChangeMCD = (totalChangeMCD / firstMCD)*100;
+		outputFile.print(formatter.format(percentChangeMCD) + "	");
+
+		double percentChangeMRK = (totalChangeMRK / firstMRK)*100;
+		outputFile.print(formatter.format(percentChangeMRK) + "	");
+
+		double percentChangeMSFT= (totalChangeMSFT / firstMSFT)*100;
+		outputFile.print(formatter.format(percentChangeMSFT) + "		");
+
+		double percentChangePFE = (totalChangePFE / firstPFE)*100;
+		outputFile.print(formatter.format(percentChangePFE) + "	");
+
+		double percentChangePG = (totalChangePG / firstPG)*100;
+		outputFile.print(formatter.format(percentChangePG) + "	");
+
+		double percentChangeTRV = (totalChangeTRV / firstTRV)*100;
+		outputFile.print(formatter.format(percentChangeTRV) + "	");
+
+		double percentChangeUTX = (totalChangeUTX / firstUTX)*100;
+		outputFile.print(formatter.format(percentChangeUTX) + "	");
+
+		double percentChangeVZ = (totalChangeVZ / firstVZ)*100;
+		outputFile.print(formatter.format(percentChangeVZ) + "	");
+
+		double percentChangeWMT = (totalChangeWMT / firstWMT)*100;
+		outputFile.print(formatter.format(percentChangeWMT) + "	");
+
+		double percentChangeDIS = (totalChangeDIS / firstDIS)*100;
+		outputFile.println(formatter.format(percentChangeDIS) + "	");
+
+		//average
+		outputFile.print("Averages" + "  ");
+
+		avgMMM = avgMMM / numberOfDays;
+		outputFile.print(formatter.format(avgMMM) + "		");
+
+		avgAA = avgAA / numberOfDays;
+		outputFile.print(formatter.format(avgAA) + "	");
+
+		avgAXP = avgAXP / numberOfDays;
+		outputFile.print(formatter.format(avgAXP) + "	");
+
+		avgT = avgT / numberOfDays;
+		outputFile.print(formatter.format(avgT) + "	");
+
+		avgBAC = avgBAC / numberOfDays;
+		outputFile.print(formatter.format(avgBAC) + "	");
+
+		avgBA = avgBA / numberOfDays;
+		outputFile.print(formatter.format(avgBA) + "	");
+
+		avgCAT = avgCAT  /numberOfDays;
+		outputFile.print(formatter.format(avgCAT) + "	");
+
+		avgCVX = avgCVX / numberOfDays;
+		outputFile.print(formatter.format(avgCVX) + "	");
+
+		avgCSCO = avgCSCO / numberOfDays;
+		outputFile.print(formatter.format(avgCSCO) + "		");
+
+		avgKO = avgKO / numberOfDays;
+		outputFile.print(formatter.format(avgKO) + "	");
+
+		avgDD = avgDD / numberOfDays;
+		outputFile.print(formatter.format(avgDD) + "	");
+
+		avgXOM = avgXOM / numberOfDays;
+		outputFile.print(formatter.format(avgXOM) + "	");
+
+		avgGE = avgGE / numberOfDays;
+		outputFile.print(formatter.format(avgGE) + "	");
+
+		avgHPQ = avgHPQ / numberOfDays;
+		outputFile.print(formatter.format(avgHPQ) + "	");
+
+		avgHD = avgHD / numberOfDays;	
+		outputFile.print(formatter.format(avgHD) + "	");
+
+		avgINTC = avgINTC / numberOfDays;
+		outputFile.print(formatter.format(avgINTC) + "		");
+
+		avgIBM = avgIBM / numberOfDays;
+		outputFile.print(formatter.format(avgIBM) + "	");
+
+		avgJNJ = avgJNJ / numberOfDays;	
+		outputFile.print(formatter.format(avgJNJ) + "	");
+
+		avgJPM = avgJPM / numberOfDays;
+		outputFile.print(formatter.format(avgJPM) + "	");
+
+		avgKFT = avgKFT / numberOfDays;
+		outputFile.print(formatter.format(avgKFT) + "	");
+
+		avgMCD = avgMCD / numberOfDays;
+		outputFile.print(formatter.format(avgMCD) + "	");
+
+		avgMRK = avgMRK / numberOfDays;
+		outputFile.print(formatter.format(avgMRK) + "	");
+
+		avgMSFT = avgMSFT / numberOfDays;
+		outputFile.print(formatter.format(avgMSFT) + "		");
+
+		avgPFE = avgPFE / numberOfDays;
+		outputFile.print(formatter.format(avgPFE) + "	");
+
+		avgPG = avgPG / numberOfDays;
+		outputFile.print(formatter.format(avgPG) + "	");
+
+		avgTRV = avgTRV / numberOfDays;
+		outputFile.print(formatter.format(avgTRV) + "	");
+
+		avgUTX = avgUTX / numberOfDays;
+		outputFile.print(formatter.format(avgUTX) + "	");
+
+		avgVZ = avgVZ / numberOfDays;
+		outputFile.print(formatter.format(avgVZ) + "	");
+
+		avgWMT = avgWMT / numberOfDays;
+		outputFile.print(formatter.format(avgWMT) + "	");
+
+		avgDIS = avgDIS / numberOfDays;
+		outputFile.println(formatter.format(avgDIS) + "	");
+
+		System.out.println("done");
+		
+		//closing files
+		inputFile.close();
+		outputFile.close();
+		System.exit(0); //close dialog boxes		
+	}
+}

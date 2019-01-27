@@ -1,0 +1,195 @@
+//*************************
+//* Author: John Gormley
+//* Date: 4/12/12
+//* Description: Calculates the amount of interest earned (plus principal)
+//*		of any integer USD and any integer interest rate (up to $1000 and 10%).
+//* 	It uses the formula New Amount = Principal*((1+ Interest Rate)^(Number of Months/12)),
+//*		the formula for compounding interest.
+//*		The reason for months/12, is because the original formula is in years.
+//* Proposed Points (out of 25): 25
+//*************************
+
+//importing libraries for GUIs
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
+import javax.swing.event.*;
+import java.lang.Math;
+import java.text.DecimalFormat;
+
+public class AssignmentEight extends JFrame {
+
+	//keeps track of how many months are chosen by the radio buttons
+	double numberOfMonths;
+			
+	//private class variables
+	private JButton calculateButton;
+	private JPanel buttonPanel1;
+	private JPanel buttonPanel2;
+
+
+	//creates variables for scroll pane and text area
+	private JScrollPane scrollPane;
+	private JTextArea textArea;
+
+
+	//creates variables for radio buttons and their group
+	private ButtonGroup timePeriods;
+	private JRadioButton oneMonth;
+	private JRadioButton threeMonths;
+	private JRadioButton sixMonths;
+	private JRadioButton twelveMonths;
+	private JRadioButton twentyfourMonths;
+	
+	//creates variables for the sliders
+	private JSlider interestSlider;
+	private JSlider amountSlider;
+
+
+	public AssignmentEight(){	
+		
+		//create text area and scroll panel
+		textArea = new JTextArea();
+		scrollPane = new JScrollPane(textArea);
+
+		//create buttons
+		calculateButton = new JButton("amount you will earn...");
+		oneMonth = new JRadioButton("One Month");
+		threeMonths = new JRadioButton("Three Months");
+		sixMonths = new JRadioButton("Six Months");
+		twelveMonths = new JRadioButton("Twelve Months");
+		twentyfourMonths = new JRadioButton("Twenty-four Months");
+
+		//add buttons to group
+		timePeriods = new ButtonGroup();
+		timePeriods.add(oneMonth);
+		timePeriods.add(threeMonths);	
+		timePeriods.add(sixMonths);
+		timePeriods.add(twelveMonths);
+		timePeriods.add(twentyfourMonths);
+
+		//create button panels and add buttons
+		buttonPanel1 = new JPanel();
+		buttonPanel1.add(oneMonth);
+		buttonPanel1.add(threeMonths);
+		buttonPanel1.add(sixMonths);
+		buttonPanel1.add(twelveMonths);
+		buttonPanel1.add(twentyfourMonths);
+
+		buttonPanel2 = new JPanel();
+		buttonPanel2.add(calculateButton);
+
+		//set content pane layout manager
+		setLayout(new BorderLayout());
+
+		//add panel to the content pane	
+		add(buttonPanel1, BorderLayout.SOUTH);
+		add(scrollPane, BorderLayout.CENTER);
+		add(buttonPanel2, BorderLayout.WEST);
+
+		//register button with action listener
+		calculateButton.addActionListener(new CalculateButtonListener()); 
+		oneMonth.addActionListener(new TimePeriodButtonListener());
+		threeMonths.addActionListener(new TimePeriodButtonListener());
+		sixMonths.addActionListener(new TimePeriodButtonListener());
+		twelveMonths.addActionListener(new TimePeriodButtonListener());
+		twentyfourMonths.addActionListener(new TimePeriodButtonListener());
+
+		// Create the slider
+
+			//creates new interest slider 0-10
+		interestSlider = new JSlider(JSlider.VERTICAL, 0, 10, 3);
+		interestSlider.setMajorTickSpacing(5);  // Major tick every 5 spaces
+		interestSlider.setMinorTickSpacing(1);  // Minor tick every space
+		interestSlider.setPaintTicks(true);     // Display tick marks
+		interestSlider.setPaintLabels(true);    // Display numbers
+		interestSlider.addChangeListener(new InterestSliderListener());
+
+			//creates new amount slider 0-1000
+		amountSlider = new JSlider(JSlider.HORIZONTAL, 0, 1000, 500);
+		amountSlider.setMajorTickSpacing(100);  // Major tick every 100 spaces
+		amountSlider.setMinorTickSpacing(25);  // Minor tick every 25 spaces
+		amountSlider.setPaintTicks(true);     // Display tick marks
+		amountSlider.setPaintLabels(true);    // Display numbers
+		amountSlider.addChangeListener(new AmountSliderListener());
+
+		//adds sliders to content pane
+		add(interestSlider, BorderLayout.EAST);
+		add(amountSlider, BorderLayout.NORTH);
+
+		//set size, title, visable, and default close on content pane
+		setSize(800,600);	
+		setTitle("Interest Calculator");
+		setVisible(true);	
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+	private class AmountSliderListener implements ChangeListener{
+		//takes in how much the user starts with, then sends it to finalButtonListener
+		public void stateChanged(ChangeEvent e){
+			textArea.append("You are computing interest with amount " + amountSlider.getValue() + " USD \n");
+		}
+	}
+
+	private class InterestSliderListener implements ChangeListener{
+		//gets percent interest user wants, then sends it to finalButtonListener
+		public void stateChanged(ChangeEvent e){
+			textArea.append("You are computing at " + interestSlider.getValue() + " percent interest \n");
+		}
+	}
+
+	private class TimePeriodButtonListener implements ActionListener{
+		//performs final calculations and prints total interest earned
+		public void actionPerformed(ActionEvent e){
+
+
+				if(e.getSource() == oneMonth){
+					numberOfMonths = 1.0;
+				}
+
+				else if(e.getSource() == threeMonths){
+					numberOfMonths = 3.0;
+				}
+
+
+				else if(e.getSource() == sixMonths){
+					numberOfMonths = 6.0;
+				}
+
+
+				else if(e.getSource() == twelveMonths){
+					numberOfMonths = 12.0;
+				}
+
+
+				else if(e.getSource() == twentyfourMonths){
+					numberOfMonths = 24.0;
+				}
+
+		}
+	}
+	
+	private class CalculateButtonListener implements ActionListener{
+		
+		//does all the final calculations and prints out the amount earned
+		public void actionPerformed(ActionEvent e){		
+
+			//formats the decimals
+			DecimalFormat formatter = new DecimalFormat("#00.00");
+			
+			double principal = amountSlider.getValue();
+			double interestCompound = Math.pow((1 + (interestSlider.getValue()*.01)),numberOfMonths/12); 
+			//divide months by 12, because in the compund interst formula, the power is in years, not months.
+
+			double amount = principal*interestCompound;
+			textArea.append("You will have earned " + formatter.format(amount) + " over \n\t");
+			textArea.append(numberOfMonths + " months with " + interestSlider.getValue() + " percent interest. \n");
+			
+		}
+	}
+
+	public static void main(String[] args){
+		//creates new interest calculator
+		new AssignmentEight();
+	}
+}

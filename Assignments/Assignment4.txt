@@ -1,0 +1,172 @@
+/*Name: John Gormley
+ * Drake ID: 100009776
+ * Date:2/17/12
+ * Description: This program runs a simple game of 2D Battleship. I believe I deserve all 30 points on this 
+ * assignment because I did all of the add-ons.
+ */
+
+import java.util.Random;
+import java.util.Scanner;
+
+public class assignmentFour 
+{
+
+	public static void main(String[] args) 
+	{
+
+		Scanner keyboard = new Scanner(System.in);
+		Random randomGenerator = new Random();
+
+		//declare variables (most of them)
+		int guessRow;
+		int guessColumn;
+		int shipRow;
+		int shipColumn;
+		int distance;
+		int i=1;
+		int j=1;
+		String response;
+		char firstLetter;
+		int numberOfGuesses = 0;
+
+		//finding the size of the board
+		System.out.println("How many rows do you want?");
+		int userRows=keyboard.nextInt();
+		keyboard.nextLine();
+
+		System.out.println("How many columns do you want?");
+		int userColumns=keyboard.nextInt();
+		keyboard.nextLine();
+
+		//choosing the ship location
+		System.out.println("Do you want the computer to "+
+				"choose the ship's location?");
+		response=keyboard.nextLine();
+		firstLetter=response.charAt(0);
+
+		int randomRow = randomGenerator.nextInt(userRows);
+		int randomColumn = randomGenerator.nextInt(userColumns);
+		if (firstLetter=='y'||firstLetter=='Y')
+		{
+			shipRow = randomRow;
+			shipColumn = randomColumn;
+		}
+		else {
+			System.out.println("Where do you want the ship row to be?");
+			shipRow=keyboard.nextInt();
+			keyboard.nextLine();
+
+			System.out.println("Where do you want the ship column to be?");
+			shipColumn=keyboard.nextInt();
+			keyboard.nextLine();
+		}
+
+		//initial guess
+		System.out.println("Guess a number for the row");
+		guessRow= keyboard.nextInt();
+		keyboard.nextLine();
+
+		System.out.println("Guess a number for the column");
+		guessColumn=keyboard.nextInt();
+		keyboard.nextLine();
+
+		numberOfGuesses++;
+
+		//initial board print
+		for (i=0; i<=userRows; i++)
+		{	
+			for( j=0; j<=userColumns; j++)
+			{
+				if (i==shipRow && i==guessRow
+						&& j==shipColumn && j==guessColumn){
+					System.out.print(" ! ");
+				}
+				else if (i==shipRow && j==shipColumn){
+					System.out.print(" X ");
+				}
+				else if (i==guessRow && j==guessColumn) {
+					System.out.print(" @ ");
+				}
+				else {
+					System.out.print(" O ");
+				}
+			}
+			System.out.println();
+
+		}
+		while ((guessRow!=shipRow || guessColumn!=shipColumn) && numberOfGuesses<5)
+		{ 
+
+			if (guessRow != shipRow || guessColumn != shipColumn) 
+			{
+				distance = Math.abs((guessRow-shipRow)+(guessColumn-shipColumn));
+
+				if (distance>=5)
+				{
+					System.out.println("You're way off.");
+				}
+				else if (distance>2 && distance<5)
+				{
+					System.out.println("Warm!");
+				}
+				else if (distance !=0)
+				{
+					System.out.println("Hot!");
+				}	
+			}
+
+			//rest of guesses
+			System.out.println("Guess a number for the row");
+			guessRow= keyboard.nextInt();
+			keyboard.nextLine();
+
+			System.out.println("Guess a number for the column");
+			guessColumn=keyboard.nextInt();
+			keyboard.nextLine();
+
+			numberOfGuesses++;
+
+			//board print 2,3,4,5
+			for (i=0; i<=userRows; i++)
+			{	
+				for( j=0; j<=userColumns; j++)
+				{
+					if (i==shipRow && i==guessRow
+							&& j==shipColumn && j==guessColumn)
+					{
+						System.out.print(" ! ");
+					}
+					else if (i==shipRow && j==shipColumn)
+					{
+						System.out.print(" X ");
+					}
+					else if (i==guessRow && j==guessColumn) 
+					{
+						System.out.print(" @ ");
+					}
+					else 
+					{
+						System.out.print(" O ");
+					}
+				}
+				System.out.println();
+
+			}
+
+		}
+
+		if (numberOfGuesses==5)
+		{
+			System.out.println("You exceeded the number of attempts!");
+			System.out.println("GAME OVER!");
+
+		}
+
+		else
+		{
+			System.out.println("You sank the battleship!");
+			System.out.println("It took you "+ numberOfGuesses +" attempts.");
+
+		}
+	}
+}

@@ -1,0 +1,26 @@
+
+/* author: (John Gormley)
+ * ID: (100009776)
+ * date: (1/20/12)
+ * description: This program multiplies two numbers and prints the result to the Console 
+ */
+ 
+public class AssignmentOne {
+	public static void main(String[] args) {
+
+	//declare variables
+	int FirstVariable;
+	int SecondVariable;
+	int multiply;
+
+	//assign the variables a value
+	FirstVariable = 7;
+	SecondVariable = 8;
+	multiply = FirstVariable * SecondVariable;
+
+	//output the results
+	System.out.print("The number " + FirstVariable " times the number " + SecondVariable + " equals " + multiply);
+	System.out.println("\n\tI made " + "a calculator!");
+	//double slashes make comments!
+	}
+}

@@ -1,0 +1,87 @@
+/*-Name: John Gormley
+-Drake ID: 100009776	
+-Date: 2/6/12
+-Description: prompts user to buy Apples, Bananas,
+ 	and Carrots in a store
+-I believe I deserve 30 (out of 30) because I have all of 
+	the extra attachments Prof. Urness required.
+ */
+import java.util.Scanner;
+import java.text.DecimalFormat;
+public class Store {
+
+	public static void main(String[] args) {
+
+		DecimalFormat formatter = new DecimalFormat("#0.00");
+		Scanner keyboard = new Scanner(System.in);
+
+		//declaration of variables
+		int amountApple = 0;
+		int amountBanana = 0;
+		int amountCarrot = 0;
+		double costApple = 0;
+		double costBanana = 0;
+		double costCarrot = 0;
+		double cost = costApple + costBanana + costCarrot;
+		char continueToLoop='y';
+
+		//price of items
+		System.out.println("Welcome to Apples, Bananas, and Carrots!");
+		System.out.println("Apples...$1.29 each");
+		System.out.println("Bananas...$1.49 each");
+		System.out.println("Carrots...$1.75 each");
+
+		//loop
+		while (continueToLoop == 'y') {
+			System.out.println("What would you like to buy?");
+			String response = keyboard.nextLine();
+			char firstLetter = response.charAt(0);
+			String loopResponse;
+			if (firstLetter=='a'||firstLetter=='A') {
+				costApple=1.29;
+				System.out.println("How many would you like?");
+				amountApple = amountApple + keyboard.nextInt();
+				keyboard.nextLine();
+				cost= costApple*amountApple + costBanana*amountBanana + costCarrot*amountCarrot;
+				System.out.println("Your cost is " + formatter.format(cost));
+			}
+			else if (firstLetter=='b'||firstLetter=='B') {
+				costBanana=1.49;
+				System.out.println("How many would you like?");
+				amountBanana = amountBanana + keyboard.nextInt();
+				keyboard.nextLine();
+				cost= costApple*amountApple + costBanana*amountBanana + costCarrot*amountCarrot;
+				System.out.println("Your cost is " + formatter.format(cost));
+			}
+			else if (firstLetter=='c'||firstLetter=='C') {
+				costCarrot=1.75;
+				System.out.println("How many would you like? ");
+				amountCarrot = amountCarrot + keyboard.nextInt();
+				keyboard.nextLine();
+				cost= costApple*amountApple + costBanana*amountBanana + costCarrot*amountCarrot;
+				System.out.println("Your cost is " + formatter.format(cost)); }
+
+			System.out.println("Would you like to buy anything else?");
+			loopResponse = keyboard.nextLine();
+			continueToLoop = loopResponse.charAt(0);
+		}
+
+		System.out.println("Pretax total = " + formatter.format(cost));
+
+		//tax
+		System.out.println("What is the percent sales tax?");
+		double tax = keyboard.nextDouble();
+		keyboard.nextLine();
+		double total= cost + cost*tax;	
+
+		//Receipt for customer
+		System.out.println("You bought:");
+		System.out.println(amountApple + " apples");
+		System.out.println(amountBanana + " bananas");
+		System.out.println(amountCarrot + " carrots");
+
+		System.out.println("Tax = "+ formatter.format(tax));
+		System.out.println("Your total is " + formatter.format(total));
+		System.out.println("Thank you!");
+
+	}}

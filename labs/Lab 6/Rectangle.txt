@@ -1,0 +1,54 @@
+/*Author: John Gormley
+ * Date: 3/9/12
+ * Description: A simple rectangle class
+ */
+public class Rectangle {
+	
+	//private fields for the class rectangle
+	private double length;
+	private double width;
+	
+	//public accessor and mutator methods
+	public void setLength(double len){
+		length = len;
+	}
+	
+	public double getLength() {
+		return length;
+	}
+	
+	public void setWidth(double w) {
+		width = w;
+	}
+	
+	public double getWidth() {
+		return width;
+	}
+	
+	public double getArea() {
+		return length*width;
+	}
+	
+	public Rectangle() {
+		length = 1.0;
+		width = 1.0;
+	}
+	
+	public Rectangle( double len, double w) {
+		length = len;
+		width = w;
+	}
+	
+	public boolean isSquare() {
+		
+		boolean result;
+		if (length == width) {
+			result = true;
+		}
+		else {
+			result = false;
+		}
+		return result;
+	}
+	
+}

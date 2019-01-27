@@ -1,0 +1,137 @@
+/******************************
+ * Author: John Gormley
+ * Date: 4/29/12
+ * Description: Assignment 9-- a simple game of Minesweeper
+ * 
+ *******************************/
+
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
+import javax.swing.event.*;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import java.util.Random;
+import java.awt.Color;
+import java.applet.*;
+
+
+public class Minesweeper extends JFrame {	
+
+	//private variables for Minesweeper
+	private int rows = 10;
+	private int columns = 10;
+	private JButton[] square = new JButton[rows*columns];
+	private JPanel panelOfSquares1;
+	private JPanel panelOfSquares2;
+	private JScrollPane scrollPane;
+	private JTextArea textArea;
+
+	private int bombCount;
+	private int i;
+	private int j;
+
+	private ArrayList<String> index;
+
+	private AudioClip music;
+
+	public Minesweeper() {
+		
+		//create array list
+		index = new ArrayList<String>();
+
+		//create text area and scroll panel
+		textArea = new JTextArea();
+		scrollPane = new JScrollPane(textArea);
+
+		//creates panels for squares
+		panelOfSquares1 = new JPanel();	
+		panelOfSquares2 = new JPanel();
+
+		//sets squares layouts
+		panelOfSquares1.setLayout(new GridLayout(10,10));
+		panelOfSquares2.setLayout(new BorderLayout());
+
+		panelOfSquares2.add(panelOfSquares1);
+		add(panelOfSquares2, BorderLayout.CENTER);
+		add(scrollPane, BorderLayout.EAST);
+
+		//creates buttons, adds them to the panel, and registers them with the action listener
+		for(i = 0; i < rows*columns; i++){
+			square[i] =  new JButton(Integer.toString(i+1));
+			panelOfSquares1.add(square[i]);		
+			square[i].addActionListener(new squareButtonListener());
+
+			//randomly put a "bomb" string into arrayList "index" in aprrox. 20% of the entries
+			if (Math.random() < .20) {
+				index.add("Bomb");
+			}
+			else {
+				index.add("No Bomb Here");
+			}
+		}
+
+		//set size, title, visable, and default close on content pane
+		setSize(400,400);	
+		setName("Minesweeper");
+		setVisible(true);		
+	}
+
+	class squareButtonListener implements ActionListener{
+		//checks which squares get clicked
+		public void actionPerformed(ActionEvent e){		
+
+			bombCount = 0;
+			int ndx = Integer.parseInt(e.getActionCommand()) - 1;
+			String output = index.get(ndx);
+
+			//if user clicks a bomb, then game is over 
+			//and background goes red
+
+			if (output.equals("Bomb")) {			
+				textArea.append("GAME OVER! \n");
+				panelOfSquares1.setBackground(Color.red);
+
+				music.play();
+			}
+
+			else{
+				textArea.append("Not a bomb \n");	
+
+				//the following if statements check the surrounding
+				//buttons to see if there is a bomb near.
+
+				if(ndx > 1 && (index.get(ndx-1).equals("Bomb"))){
+					bombCount++;				
+				}
+				if(ndx < 99 && (index.get(ndx+1).equals("Bomb"))){
+					bombCount++;				
+				}
+				if(ndx > 11 && (index.get(ndx-10).equals("Bomb"))){
+					bombCount++;				
+				}
+				if(ndx < 90 && (index.get(ndx+10).equals("Bomb"))){
+					bombCount++;				
+				}
+
+				textArea.append(bombCount + " bombs are near \n");
+				panelOfSquares1.setBackground(Color.green);
+			}
+		}
+	}
+
+	public static void main(String[] args){
+		//creates new game
+		new Minesweeper();
+	}
+}
